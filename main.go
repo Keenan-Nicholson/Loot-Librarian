@@ -13,38 +13,18 @@ import (
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/joho/godotenv"
 )
 
-type DamageType struct {
-	Index string `json:"index"`
-	Name  string `json:"name"`
-	URL   string `json:"url"`
-}
-
-type Damage struct {
-	DamageDice string     `json:"damage_dice"`
-	DamageType DamageType `json:"damage_type"`
-}
-
-type Cost struct {
-	Quantity int    `json:"quantity"`
-	Unit     string `json:"unit"`
-}
-
-type Range struct {
-	Normal int `json:"normal"`
-}
-
-type Content struct {
-	WeaponCategory string `json:"weapon_category"`
-	WeaponRange    string `json:"weapon_range"`
-	Damage         Damage `json:"damage"`
-	Cost           Cost   `json:"cost"`
-	Range          Range  `json:"range"`
-}
-
 func main() {
-	discord, err := discordgo.New("Bot " + "MTI2Mjg2OTgwMzkzMzIzNzQxMg.GDSw3L.tj_MI9iL8ozHisBZv79s4Jm3aAjhex3y1RRYfw")
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
+	secret := os.Getenv("DISCORD_BOT_TOKEN")
+
+	discord, err := discordgo.New("Bot " + secret)
 
 	if err != nil {
 		log.Fatal(err)
@@ -56,9 +36,9 @@ func main() {
 			return
 		}
 
-		if strings.Contains(m.Content, "loot lib get") {
+		if strings.Contains(m.Content, "!loot") {
 
-			item := m.Content[13:]
+			item := m.Content[6:]
 			url := "https://www.dnd5eapi.co/api/equipment/" + item
 			method := "GET"
 
@@ -84,17 +64,41 @@ func main() {
 				return
 			}
 
-			var content Content
+			var equipment Equipment
 
-			err = json.Unmarshal(body, &content)
+			err = json.Unmarshal(body, &equipment)
 			if err != nil {
 				fmt.Println(err)
 				return
 			}
 
-			weapon_category, weapon_range, damage_dice, damage_type, cost := content.WeaponCategory, content.WeaponRange, content.Damage.DamageDice, content.Damage.DamageType.Name, content.Cost.Quantity
+			weapon_category, weapon_range, damage_dice, damage_type, weapon_cost := equipment.Weapon.WeaponCategory, equipment.Weapon.WeaponRange, equipment.Weapon.Damage.DamageDice, equipment.Weapon.Damage.DamageType.Name, equipment.Weapon.Cost.Quantity
+			armor_category, armor_class, str_minimum, stealth_disadvantage, weight, armor_cost := equipment.Armor.ArmorCategory, equipment.Armor.ArmorClass.Base, equipment.Armor.StrMinimum, equipment.Armor.StealthDisadvantage, equipment.Armor.Weight, equipment.Armor.Cost.Quantity
 
-			s.ChannelMessageSend(m.ChannelID, "Weapon Category: "+weapon_category+"\n"+"Weapon Range: "+weapon_range+"\n"+"Damage Dice: "+damage_dice+"\n"+"Damage Type: "+damage_type+"\n"+"Cost: "+strconv.Itoa(cost)+content.Cost.Unit)
+			fmt.Println(url)
+			fmt.Println(equipment)
+			fmt.Println(weapon_category, weapon_range, damage_dice, damage_type, weapon_cost)
+			fmt.Println(armor_category, armor_class, str_minimum, stealth_disadvantage, weight, armor_cost)
+
+			if weapon_category == "" {
+				s.ChannelMessageSend(m.ChannelID,
+					"Armor Category: "+armor_category+"\n"+
+						"Armor Class: "+strconv.Itoa(armor_class)+"\n"+
+						"Strength Minimum: "+strconv.Itoa(str_minimum)+"\n"+
+						"Stealth Disadvantage: "+strconv.FormatBool(stealth_disadvantage)+"\n"+
+						"Weight: "+strconv.Itoa(weight)+"\n"+
+						"Cost: "+strconv.Itoa(armor_cost)+equipment.Armor.Cost.Unit)
+
+			} else {
+				s.ChannelMessageSend(m.ChannelID,
+					"Weapon Category: "+weapon_category+"\n"+
+						"Weapon Range: "+weapon_range+"\n"+
+						"Damage Dice: "+damage_dice+"\n"+
+						"Damage Type: "+damage_type+"\n"+
+						"Cost: "+strconv.Itoa(weapon_cost)+equipment.Weapon.Cost.Unit)
+
+			}
+
 		}
 	})
 
