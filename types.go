@@ -32,20 +32,16 @@ type ArmorClass struct {
 }
 
 type Equipment struct {
-	Weapon struct {
-		WeaponCategory string `json:"weapon_category"`
-		WeaponRange    string `json:"weapon_range"`
-		Damage         Damage `json:"damage"`
-		Cost           Cost   `json:"cost"`
-		Range          Range  `json:"range"`
-	}
+	WeaponCategory     string `json:"weapon_category"`
+	WeaponRange        string `json:"weapon_range"`
+	Damage             Damage `json:"damage"`
+	WeaponRangeDetails Range  `json:"range"` // Changed field name to avoid conflict with WeaponRange
 
-	Armor struct {
-		ArmorCategory       string     `json:"armor_category"`
-		ArmorClass          ArmorClass `json:"armor_class"`
-		StrMinimum          int        `json:"str_minimum"`
-		StealthDisadvantage bool       `json:"stealth_disadvantage"`
-		Weight              int        `json:"weight"`
-		Cost                Cost       `json:"cost"`
-	}
+	ArmorCategory       string     `json:"armor_category"`
+	ArmorClass          ArmorClass `json:"armor_class"`
+	StrMinimum          int        `json:"str_minimum"`
+	StealthDisadvantage bool       `json:"stealth_disadvantage"`
+	ArmorWeight         int        `json:"weight"` // Changed field name to avoid conflict with Armor Weight
+
+	Cost Cost `json:"cost"`
 }

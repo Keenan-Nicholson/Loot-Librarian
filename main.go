@@ -91,15 +91,15 @@ func getLootInfo(item string) (string, error) {
 		return "", err
 	}
 
-	weapon_category, weapon_range, damage_dice, damage_type, weapon_cost := equipment.Weapon.WeaponCategory, equipment.Weapon.WeaponRange, equipment.Weapon.Damage.DamageDice, equipment.Weapon.Damage.DamageType.Name, equipment.Weapon.Cost.Quantity
-	armor_category, armor_class, str_minimum, stealth_disadvantage, weight, armor_cost := equipment.Armor.ArmorCategory, equipment.Armor.ArmorClass.Base, equipment.Armor.StrMinimum, equipment.Armor.StealthDisadvantage, equipment.Armor.Weight, equipment.Armor.Cost.Quantity
+	weapon_category, weapon_range, damage_dice, damage_type, weapon_cost := equipment.WeaponCategory, equipment.WeaponRange, equipment.Damage.DamageDice, equipment.Damage.DamageType.Name, equipment.Cost.Quantity
+	armor_category, armor_class, str_minimum, stealth_disadvantage, weight, armor_cost := equipment.ArmorCategory, equipment.ArmorClass.Base, equipment.StrMinimum, equipment.StealthDisadvantage, equipment.ArmorWeight, equipment.Cost.Quantity
 
 	if weapon_category == "" {
 		return fmt.Sprintf("Armor Category: %s\nArmor Class: %d\nStrength Minimum: %d\nStealth Disadvantage: %t\nWeight: %d\nCost: %d%s",
-			armor_category, armor_class, str_minimum, stealth_disadvantage, weight, armor_cost, equipment.Armor.Cost.Unit), nil
+			armor_category, armor_class, str_minimum, stealth_disadvantage, weight, armor_cost, equipment.Cost.Unit), nil
 	}
 	return fmt.Sprintf("Weapon Category: %s\nWeapon Range: %s\nDamage Dice: %s\nDamage Type: %s\nCost: %d%s",
-		weapon_category, weapon_range, damage_dice, damage_type, weapon_cost, equipment.Weapon.Cost.Unit), nil
+		weapon_category, weapon_range, damage_dice, damage_type, weapon_cost, equipment.Cost.Unit), nil
 }
 
 func testGetLootInfo(item string) {
