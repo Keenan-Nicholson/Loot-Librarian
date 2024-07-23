@@ -93,8 +93,9 @@ func getLootInfo(item string) (string, error) {
 
 	weapon_category, weapon_range, damage_dice, damage_type, weapon_cost := equipment.WeaponCategory, equipment.WeaponRange, equipment.Damage.DamageDice, equipment.Damage.DamageType.Name, equipment.Cost.Quantity
 	armor_category, armor_class, str_minimum, stealth_disadvantage, weight, armor_cost := equipment.ArmorCategory, equipment.ArmorClass.Base, equipment.StrMinimum, equipment.StealthDisadvantage, equipment.ArmorWeight, equipment.Cost.Quantity
-
-	if weapon_category == "" {
+	if weapon_category == "" && armor_category == "" {
+		return "Sorry, this bot sucks. It can only handle SRD weapon and armor items.", nil
+	} else if weapon_category == "" {
 		return fmt.Sprintf("Armor Category: %s\nArmor Class: %d\nStrength Minimum: %d\nStealth Disadvantage: %t\nWeight: %d\nCost: %d%s",
 			armor_category, armor_class, str_minimum, stealth_disadvantage, weight, armor_cost, equipment.Cost.Unit), nil
 	}
